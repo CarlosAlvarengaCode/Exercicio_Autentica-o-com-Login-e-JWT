@@ -1,54 +1,63 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
-import * as bcrypt from 'bcrypt';
 import { UpdateUserDto } from './dto/update-user.dto';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
-  remove(arg0: number) {
-    throw new Error('Method not implemented.');
-  }
-  update(id: number, updateUserDto: UpdateUserDto) {
-    throw new Error('Method not implemented.');
-  }
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
   ) {}
 
-  async create(createUserDto: CreateUserDto): Promise<User> {
-    const { name, email, password } = createUserDto;
-
-    // 🔥 proteção extra
-    if (!password) {
-      throw new Error('Senha não foi enviada no body');
-    }
-
-    const saltRounds = 10;
-    const hashedPassword = await bcrypt.hash(password, saltRounds);
-
+  // Criar usuário
+  async create(dto: CreateUserDto) {
+    const hashedPassword = await bcrypt.hash(dto.password, 10);
     const user = this.userRepository.create({
-      name,
-      email,
+      name: dto.name,
+      email: dto.email,
       password: hashedPassword,
     });
-
     return this.userRepository.save(user);
   }
 
-  async findAll(): Promise<User[]> {
+  // Listar todos os usuários
+  async findAll() {
     return this.userRepository.find();
   }
 
-  async findOne(id: number): Promise<User | null> {
+  // Buscar usuário por ID
+  async findOneById(id: number) {
     return this.userRepository.findOne({ where: { id } });
   }
 
-  async findByEmail(email: string): Promise<User | null> {
+  // Buscar usuário por email
+  async findOneByEmail(email: string) {
     return this.userRepository.findOne({ where: { email } });
   }
+
+  // Atualizar usuário
+  async update(id: number, dto: UpdateUserDto) {
+    const user = await this.findOneById(id);
+    if (!user) throw new NotFoundException('Usuário não encontrado');
+
+    if (dto.password) {
+      dto.password = await bcrypt.hash(dto.password, 10);
+    }
+
+    Object.assign(user, dto);
+    return this.userRepository.save(user);
+  }
+
+  // Remover usuário
+  async remove(id: number) {
+    const user = await this.findOneById(id);
+    if (!user) throw new NotFoundException('Usuário não encontrado');
+
+    await this.userRepository.remove(user);
+    return { message: 'Usuário deletado com sucesso' };
+  }
 }
- 
