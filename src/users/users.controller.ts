@@ -30,6 +30,13 @@ export class UsersController {
     return user;
   }
 
+  /*/@UseGuards(JwtAuthGuard)
+  @Get('/email/:email')
+  async findByemail(@Param('email') email: string) {
+    const user = await this.usersService.findOneByEmail(email);
+    if (!user) throw new NotFoundException('Usuário não encontrado');
+    return user;/
+  }*/
   // ✅ Atualizar usuário (protegido por JWT)
   @UseGuards(JwtAuthGuard)
   @Put(':id')
