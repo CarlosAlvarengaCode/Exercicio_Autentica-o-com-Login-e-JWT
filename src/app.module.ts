@@ -3,10 +3,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import * as dotenv from 'dotenv';
+import { TasksModule } from './tasks/tasksModule';
 
-dotenv.config(); // garante que o .env seja carregado
+dotenv.config(); 
 
 @Module({
+
   imports: [
     TypeOrmModule.forRoot({
       type: 'mysql',
@@ -20,6 +22,8 @@ dotenv.config(); // garante que o .env seja carregado
     }),
     UsersModule,
     AuthModule,
+    TasksModule
   ],
 })
+
 export class AppModule {}
