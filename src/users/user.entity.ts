@@ -1,18 +1,17 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { Tasks } from 'src/tasks/entities/tesks.entity';
 
 @Entity()
 export class User {
-
   @PrimaryGeneratedColumn()
-
   id: number;
-@Column({ nullable: true })
-  name?: string
-
-  @Column({ unique: true })
-  email: string;
 
   @Column()
-  password: string;
-  
+  name: string;
+
+  @Column()
+  email: string;
+
+  @OneToMany(() => Tasks, (task) => task.user)
+  tasks: Tasks[];
 }
