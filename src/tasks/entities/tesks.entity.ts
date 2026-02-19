@@ -1,3 +1,4 @@
+import { User } from 'src/users/entities/user.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -5,7 +6,6 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-import { User } from 'src/users/user.entity';
 
 @Entity()
 export class Tasks {
