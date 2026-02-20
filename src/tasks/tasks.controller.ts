@@ -22,18 +22,15 @@ export class TasksController {
 
   private readonly logger = new Logger('TasksService');
   @Post()
-  async criar(@Req() req: any, @Body() dto: CreateTasksDto) {
-    const usuarioId = req.user.id ?? req.user.sub;
+  async criar(@Body() dto: CreateTasksDto) {
     return this.tasksService.create({
       ...dto,
-      userId: usuarioId,
     });
   }
 
   @Get()
-  async listar(@Req() req: any) {
-    const usuarioId = req.user.id ?? req.user.sub;
-    return this.tasksService.findAllByUser(usuarioId);
+  async listar() {
+    return this.tasksService.findAll();
   }
   @Put(':id')
   async atualizar(
